@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant for Word</title>
+    
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .card h3 {
+            margin-bottom: 15px;
+            color: #5d5d5d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .input-group {
+            margin: 12px 0;
+        }
+        
+        textarea, input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+        
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            display: none;
+            font-size: 14px;
+        }
+        
+        .result.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #dc3545;
+        }
+        
+        .status-dot.connected {
+            background: #28a745;
+        }
+        
+        .settings-section {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Assistant</h1>
+            <p>Интеграция с DeepSeek AI • Бесплатная версия</p>
+        </div>
+
+        <!-- Настройки API -->
+        <div class="card">
+            <h3>⚙️ Настройки DeepSeek API</h3>
+            <div class="input-group">
+                <input type="password" id="apiKey" placeholder="Введите ваш DeepSeek API ключ" />
+            </div>
+            <button class="btn btn-success" onclick="saveApiKey()">
+                <span>💾</span> Сохранить ключ
+            </button>
+            <div class="api-status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="apiStatusText">API ключ не настроен</span>
+            </div>
+            
+            <div class="settings-section">
+                <p><strong>Как получить API ключ:</strong></p>
+                <ol style="font-size: 11px; margin-left: 15px; margin-top: 8px;">
+                    <li>Перейдите на <a href="https://platform.deepseek.com" target="_blank" style="color: #667eea;">platform.deepseek.com</a></li>
+                    <li>Зарегистрируйтесь или войдите в аккаунт</li>
+                    <li>В разделе API Keys создайте новый ключ</li>
+                    <li>Скопируйте и вставьте ключ выше</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📝 Проверка и улучшение</h3>
+            <button class="btn" onclick="checkGrammar()">
+                <span>🔍</span> Проверить грамматику
+            </button>
+            <button class="btn" onclick="improveText()">
+                <span>✨</span> Улучшить текст
+            </button>
+            <button class="btn" onclick="simplifyText()">
+                <span>📖</span> Упростить текст
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>✍️ Написание текста</h3>
+            <div class="input-group">
+                <input type="text" id="promptInput" placeholder="О чем написать текст?" />
+            </div>
+            <button class="btn" onclick="generateText()">
+                <span>🚀</span> Сгенерировать текст
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>🔄 Преобразование</h3>
+            <div class="input-group">
+                <select id="transformType">
+                    <option value="formal">📊 Сделать формальным</option>
+                    <option value="casual">😊 Сделать неформальным</option>
+                    <option value="shorten">📉 Сократить текст</option>
+                    <option value="expand">📈 Расширить текст</option>
+                </select>
+            </div>
+            <button class="btn" onclick="transformText()">
+                <span>🔄</span> Преобразовать
+            </button>
+        </div>
+
+        <div class="card">
+            <h3>🎯 Кастомный запрос</h3>
+            <div class="input-group">
+                <textarea id="customPrompt" placeholder="Опишите, что нужно сделать с текстом..."></textarea>
+            </div>
+            <button class="btn" onclick="customAction()">
+                <span>⚡</span> Выполнить
+            </button>
+        </div>
+
+        <!-- Тестирование API -->
+        <div class="card">
+            <h3>🧪 Тест подключения</h3>
+            <button class="btn btn-secondary" onclick="testApiConnection()">
+                <span>🔗</span> Проверить подключение к DeepSeek
+            </button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>DeepSeek AI обрабатывает ваш запрос...</p>
+        </div>
+
+        <div class="result" id="result"></div>
+        
+        <div class="status" id="status">
+            Готов к работе • Выделите текст в документе
+        </div>
+    </div>
+
+    <script>
+        // Конфигурация DeepSeek API
+        const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
+        const DEEPSEEK_MODEL = 'deepseek-chat'; // Бесплатная модель
+
+        // Инициализация
+        Office.onReady((info) => {
+            if (info.host === Office.HostType.Word) {
+                document.getElementById('status').textContent = 'Подключено к Word • Выделите текст для работы';
+                loadApiKey();
+                console.log('AI Assistant with DeepSeek loaded successfully');
+            }
+        });
+
+        // Функции для работы с API ключом
+        function saveApiKey() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (!apiKey) {
+                showError('Пожалуйста, введите API ключ');
+                return;
+            }
+            
+            localStorage.setItem('deepseek_api_key', apiKey);
+            updateApiStatus(true);
+            showResult('API ключ сохранен!', false);
+        }
+
+        function loadApiKey() {
+            const savedKey = localStorage.getItem('deepseek_api_key');
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+                updateApiStatus(true);
+            } else {
+                updateApiStatus(false);
+            }
+        }
+
+        function updateApiStatus(connected) {
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('apiStatusText');
+            
+            if (connected) {
+                statusDot.className = 'status-dot connected';
+                statusText.textContent = 'API ключ настроен';
+            } else {
+                statusDot.className = 'status-dot';
+                statusText.textContent = 'API ключ не настроен';
+            }
+        }
+
+        function getApiKey() {
+            return localStorage.getItem('deepseek_api_key');
+        }
+
+        // Основная функция для вызова DeepSeek API
+        async function callDeepSeekAI(prompt, systemMessage = "Ты полезный ассистент для работы с текстом.") {
+            const apiKey = getApiKey();
+            if (!apiKey) {
+                throw new Error('API ключ не настроен. Пожалуйста, введите ваш DeepSeek API ключ в настройках.');
+            }
+
+            try {
+                const response = await fetch(DEEPSEEK_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: DEEPSEEK_MODEL,
+                        messages: [
+                            {
+                                role: "system",
+                                content: systemMessage
+                            },
+                            {
+                                role: "user",
+                                content: prompt
+                            }
+                        ],
+                        max_tokens: 2000,
+                        temperature: 0.7,
+                        stream: false
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`API ошибка: ${response.status} - ${errorData.error?.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content.trim();
+            } catch (error) {
+                console.error('DeepSeek API error:', error);
+                throw error;
+            }
+        }
+
+        // Функции для работы с текстом в Word
+        async function getSelectedText() {
+            try {
+                return await Word.run(async (context) => {
+                    const selection = context.document.getSelection();
+                    selection.load('text');
+                    await context.sync();
+                    return selection.text.trim();
+                });
+            } catch (error) {
+                showError('Ошибка при получении текста: ' + error.message);
+                return null;
+            }
+        }
+
+        async function insertText(text) {
+            try {
+                await Word.run(async (context) => {
+                    const selection = context.document.getSelection();
+                    selection.insertText(text, Word.InsertLocation.replace);
+                    await context.sync();
+                });
+                return true;
+            } catch (error) {
+                showError('Ошибка при вставке текста: ' + error.message);
+                return false;
+            }
+        }
+
+        // Промпты для разных задач
+        const PROMPTS = {
+            grammar: (text) => `Проверь грамматику, орфографию и пунктуацию следующего текста на русском языке. Верни только исправленный текст без дополнительных комментариев:\n\n${text}`,
+            
+            improve: (text) => `Улучши следующий текст на русском языке: сделай его более грамотным, стилистически правильным и читаемым. Верни только улучшенный текст:\n\n${text}`,
+            
+            simplify: (text) => `Упрости следующий текст на русском языке, сделай его более понятным для широкой аудитории. Сохрани основную мысль, но используй более простые слова и конструкции. Верни только упрощенный текст:\n\n${text}`,
+            
+            formal: (text) => `Преобразуй следующий текст в формальный официально-деловой стиль на русском языке. Верни только преобразованный текст:\n\n${text}`,
+            
+            casual: (text) => `Сделай следующий текст более неформальным и разговорным на русском языке. Верни только преобразованный текст:\n\n${text}`,
+            
+            shorten: (text) => `Сократи следующий текст на русском языке, сохранив основную мысль и ключевые идеи. Верни только сокращенный текст:\n\n${text}`,
+            
+            expand: (text) => `Расширь и дополни следующий текст на русском языке, добавив деталей и раскрыв тему более полно. Верни только расширенный текст:\n\n${text}`,
+            
+            generate: (prompt) => `Напиши текст на русском языке по следующему описанию: "${prompt}". Текст должен быть грамотным, структурированным и соответствовать теме.`,
+            
+            custom: (text, customPrompt) => `${customPrompt}\n\nТекст для работы: ${text}`
+        };
+
+        // Основные функции обработки
+        async function processWithAI(action, text, customPrompt = '') {
+            showLoading(true);
+            
+            try {
+                let prompt;
+                if (action === 'generate') {
+                    prompt = PROMPTS.generate(text);
+                } else if (action === 'custom') {
+                    prompt = PROMPTS.custom(text, customPrompt);
+                } else {
+                    prompt = PROMPTS[action](text);
+                }
+
+                const result = await callDeepSeekAI(prompt, "Ты профессиональный редактор и писатель, специализирующийся на русском языке.");
+                
+                const success = await insertText(result);
+                showLoading(false);
+                
+                if (success) {
+                    const messages = {
+                        grammar: 'Грамматика проверена и исправлена с помощью DeepSeek AI!',
+                        improve: 'Текст улучшен с помощью DeepSeek AI!',
+                        simplify: 'Текст упрощен с помощью DeepSeek AI!',
+                        formal: 'Текст преобразован в формальный стиль!',
+                        casual: 'Текст преобразован в неформальный стиль!',
+                        shorten: 'Текст сокращен!',
+                        expand: 'Текст расширен!',
+                        generate: 'Текст сгенерирован с помощью DeepSeek AI!',
+                        custom: 'Запрос выполнен с помощью DeepSeek AI!'
+                    };
+                    
+                    showResult(messages[action] || 'Операция выполнена успешно!', false);
+                }
+            } catch (error) {
+                showLoading(false);
+                showError(`Ошибка DeepSeek API: ${error.message}`);
+            }
+        }
+
+        // Обработчики кнопок
+        async function checkGrammar() {
+            const text = await getSelectedText();
+            if (!text) return showError('Пожалуйста, выделите текст для проверки');
+            await processWithAI('grammar', text);
+        }
+
+        async function improveText() {
+            const text = await getSelectedText();
+            if (!text) return showError('Пожалуйста, выделите текст для улучшения');
+            await processWithAI('improve', text);
+        }
+
+        async function simplifyText() {
+            const text = await getSelectedText();
+            if (!text) return showError('Пожалуйста, выделите текст для упрощения');
+            await processWithAI('simplify', text);
+        }
+
+        async function generateText() {
+            const prompt = document.getElementById('promptInput').value;
+            if (!prompt) return showError('Пожалуйста, введите описание текста');
+            
+            await processWithAI('generate', prompt);
+            document.getElementById('promptInput').value = '';
+        }
+
+        async function transformText() {
+            const text = await getSelectedText();
+            if (!text) return showError('Пожалуйста, выделите текст для преобразования');
+            
+            const transformType = document.getElementById('transformType').value;
+            await processWithAI(transformType, text);
+        }
+
+        async function customAction() {
+            const text = await getSelectedText();
+            const prompt = document.getElementById('customPrompt').value;
+            if (!prompt) return showError('Пожалуйста, введите запрос');
+            
+            await processWithAI('custom', text || '', prompt);
+            document.getElementById('customPrompt').value = '';
+        }
+
+        // Тестирование подключения
+        async function testApiConnection() {
+            const apiKey = getApiKey();
+            if (!apiKey) {
+                showError('Пожалуйста, сначала сохраните API ключ');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const testPrompt = "Ответь одним словом: 'работает'";
+                const response = await callDeepSeekAI(testPrompt, "Ты отвечаешь только одним словом.");
+                
+                showLoading(false);
+                if (response && response.toLowerCase().includes('работает')) {
+                    showResult('✅ Подключение к DeepSeek API успешно!', false);
+                    updateApiStatus(true);
+                } else {
+                    showError('Неожиданный ответ от API');
+                }
+            } catch (error) {
+                showLoading(false);
+                showError(`Ошибка подключения: ${error.message}`);
+                updateApiStatus(false);
+            }
+        }
+
+        // Вспомогательные функции
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function showResult(message, isError = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = isError ? 'result error' : 'result';
+            resultDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showError(message) {
+            showResult(message, true);
+        }
+
+        // Обработчики событий для улучшения UX
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    if (!this.disabled) {
+                        this.style.transform = 'translateY(-2px)';
+                    }
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    if (!this.disabled) {
+                        this.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
