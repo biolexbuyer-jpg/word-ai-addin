@@ -10,7 +10,7 @@
   <DisplayName DefaultValue="AI Assistant for Word"/>
   <Description DefaultValue="AI-powered text assistant with DeepSeek integration"/>
   <IconUrl DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin/icon.png"/>
-  <SupportUrl DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin/"/>
+  <SupportUrl DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin"/>
   
   <AppDomains>
     <AppDomain>https://biolexbuyer-jpg.github.io</AppDomain>
