@@ -9,11 +9,11 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="AI Assistant for Word"/>
   <Description DefaultValue="AI-powered text assistant with DeepSeek integration"/>
-  <IconUrl DefaultValue="https://YOUR_USERNAME.github.io/YOUR_REPOSITORY/icon.png"/>
-  <SupportUrl DefaultValue="https://github.com/YOUR_USERNAME/YOUR_REPOSITORY"/>
+  <IconUrl DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin/icon.png"/>
+  <SupportUrl DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin/"/>
   
   <AppDomains>
-    <AppDomain>https://YOUR_USERNAME.github.io</AppDomain>
+    <AppDomain>https://biolexbuyer-jpg.github.io</AppDomain>
     <AppDomain>https://api.deepseek.com</AppDomain>
     <AppDomain>https://api-docs.deepseek.com</AppDomain>
   </AppDomains>
@@ -29,7 +29,7 @@
   </Requirements>
   
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://YOUR_USERNAME.github.io/YOUR_REPOSITORY/"/>
+    <SourceLocation DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin/"/>
   </DefaultSettings>
   
   <Permissions>ReadWriteDocument</Permissions>
