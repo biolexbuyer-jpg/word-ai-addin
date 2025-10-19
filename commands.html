@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+</head>
+<body>
+    <script>
+        Office.initialize = function (reason) {
+            // Инициализация команд для десктопной версии
+        };
+
+        // Функция для быстрой проверки грамматики
+        function quickGrammarCheck(event) {
+            Word.run(async (context) => {
+                try {
+                    const selection = context.document.getSelection();
+                    selection.load('text');
+                    await context.sync();
+                    
+                    const text = selection.text;
+                    if (text && text.trim().length > 0) {
+                        // Здесь может быть вызов API для быстрой проверки
+                        selection.insertText(`[Проверено: ${text}]`, Word.InsertLocation.replace);
+                    }
+                    
+                    await context.sync();
+                    event.completed();
+                } catch (error) {
+                    console.error('Quick action error:', error);
+                    event.completed();
+                }
+            });
+        }
+
+        // Регистрируем функции для десктопной версии
+        Office.actions.associate("quickGrammarCheck", quickGrammarCheck);
+    </script>
+</body>
+</html>
