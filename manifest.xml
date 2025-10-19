@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
-           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" 
            xsi:type="TaskPaneApp">
   
-  <Id>aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee</Id>
+  <Id>550e8400-e29b-41d4-a716-446655440000</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>AI Assistant</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="AI Assistant for Word"/>
-  <Description DefaultValue="AI-powered text assistant with DeepSeek integration"/>
-  <IconUrl DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin/icon.png"/>
+  <DisplayName DefaultValue="AI Assistant for Word</DisplayName>
+  <Description DefaultValue="AI-powered text assistant with DeepSeek integration</Description>
+  <IconUrl DefaultValue="https://img.icons8.com/color/32/000000/ai.png"/>
   <SupportUrl DefaultValue="https://github.com/biolexbuyer-jpg/word-ai-addin"/>
   
   <AppDomains>
@@ -34,69 +32,4 @@
   </DefaultSettings>
   
   <Permissions>ReadWriteDocument</Permissions>
-
-  <!-- БЛОК ДЛЯ ДЕСКТОПНОЙ ВЕРСИИ -->
-  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
-    <Hosts>
-      <Host xsi:type="Document">
-        <DesktopFormFactor>
-          <GetStarted>
-            <Title resid="GetStarted.Title"/>
-          </GetStarted>
-          <FunctionFile resid="Commands.Url"/>
-          
-          <ExtensionPoint xsi:type="PrimaryCommandSurface">
-            <OfficeTab id="TabHome">
-              <Group id="CommandsGroup">
-                <Label resid="CommandsGroup.Label"/>
-                <Icon>
-                  <bt:Image size="16" resid="Icon.16x16"/>
-                  <bt:Image size="32" resid="Icon.32x32"/>
-                  <bt:Image size="80" resid="Icon.80x80"/>
-                </Icon>
-                
-                <Control xsi:type="Button" id="TaskpaneButton">
-                  <Label resid="TaskpaneButton.Label"/>
-                  <Supertip>
-                    <Title resid="TaskpaneButton.Label"/>
-                    <Description resid="TaskpaneButton.Tooltip"/>
-                  </Supertip>
-                  <Icon>
-                    <bt:Image size="16" resid="Icon.16x16"/>
-                    <bt:Image size="32" resid="Icon.32x32"/>
-                    <bt:Image size="80" resid="Icon.80x80"/>
-                  </Icon>
-                  <Action xsi:type="ShowTaskpane">
-                    <TaskpaneId>ButtonId1</TaskpaneId>
-                    <SourceLocation resid="Taskpane.Url"/>
-                  </Action>
-                </Control>
-              </Group>
-            </OfficeTab>
-          </ExtensionPoint>
-        </DesktopFormFactor>
-      </Host>
-    </Hosts>
-    
-    <Resources>
-      <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin/icon-16.png"/>
-        <bt:Image id="Icon.32x32" DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin/icon-32.png"/>
-        <bt:Image id="Icon.80x80" DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin/icon-80.png"/>
-      </bt:Images>
-      <bt:Urls>
-        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://go.microsoft.com/fwlink/?LinkId=276812"/>
-        <bt:Url id="Commands.Url" DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin/commands.html"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://biolexbuyer-jpg.github.io/word-ai-addin/"/>
-      </bt:Urls>
-      <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="AI Assistant loaded!"/>
-        <bt:String id="CommandsGroup.Label" DefaultValue="AI Assistant"/>
-        <bt:String id="TaskpaneButton.Label" DefaultValue="AI Assistant"/>
-      </bt:ShortStrings>
-      <bt:LongStrings>
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Open AI Assistant pane"/>
-      </bt:LongStrings>
-    </Resources>
-  </VersionOverrides>
 </OfficeApp>
