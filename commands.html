@@ -7,8 +7,24 @@
 <body>
     <script>
         Office.initialize = function (reason) {
-            // Инициализация команд
+            // Инициализация команд для десктопной версии
         };
+
+        // Функция для быстрого вызова AI ассистента
+        function quickAIAction(event) {
+            Word.run(async (context) => {
+                try {
+                    // Просто открываем панель надстройки
+                    event.completed();
+                } catch (error) {
+                    console.error('Quick action error:', error);
+                    event.completed();
+                }
+            });
+        }
+
+        // Регистрируем функции для десктопной версии
+        Office.actions.associate("quickAIAction", quickAIAction);
     </script>
 </body>
 </html>
